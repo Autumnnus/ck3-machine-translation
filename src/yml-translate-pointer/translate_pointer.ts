@@ -24,7 +24,7 @@ function processYmlFile(filePath: string) {
     if (index === 0) return line;
 
     if (line.trim().startsWith("#") || line.trim() === "") return "";
-    const cleanLine = line.split("#")[0].trimEnd();
+    const cleanLine = line.replace(/(^|[^"])\s+#(?![^"]*#).*$/, "$1").trimEnd();
     return `${cleanLine} # Translated!`;
   });
 

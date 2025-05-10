@@ -1,7 +1,10 @@
 import axios from "axios";
 import { promises as fs } from "fs";
 import * as path from "path";
+import dotenv from "dotenv";
 
+
+dotenv.config();
 const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
 const pattern = /\[[^"\]]*]|\$[^$]+\$|#[^$]+#|\\n|@[^!]+!/g;
 
@@ -49,7 +52,7 @@ async function processFile(filePath: string, targetLang: string) {
 
       if (!line.trim() || line.includes("# Translated!")) return line;
 
-      const noComment = line.split("#")[0].trimEnd();
+      const noComment = line.replace(/(^|[^"])\s+#(?![^"]*#).*$/, "$1").trimEnd();
       const { clean, map } = extractTranslatable(noComment);
       const translated = clean.trim()
         ? await translateText(clean, targetLang)
