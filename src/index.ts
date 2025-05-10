@@ -8,6 +8,7 @@ const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
 const pattern = /\[[^"\]]*]|\$[^$]+\$|#[^$]+#|\\n|@[^!]+!/g;
 const DEEPL_FREE_ENDPOINT = "https://api-free.deepl.com/v2/translate";
 const DEEPL_PRO_ENDPOINT = "https://api.deepl.com/v2/translate";
+const targetLanguage = "TR";
 
 function extractTranslatable(text: string) {
   const matches = text.match(pattern) ?? [];
@@ -40,7 +41,7 @@ async function translateText(text: string, targetLang: string) {
       if (err.response?.status === 429 && attempts < maxAttempts) {
         attempts++;
         console.warn(
-          `429 alındı, yeniden dene #${attempts} (bekle ${delay}ms)`
+          `429 Error, Trying again #${attempts} (bekle ${delay}ms)`
         );
         await sleep(delay);
         delay *= 2;
@@ -122,4 +123,4 @@ async function processFile(filePath: string, targetLang: string) {
 }
 
 const rootFolder = "./loc";
-processDirectory(rootFolder, "TR").catch(console.error);
+processDirectory(rootFolder, targetLanguage).catch(console.error);
