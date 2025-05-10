@@ -1,4 +1,16 @@
-Simplest way to translate CK3 localization
+# Simplest Way to Translate CK3 Localization
+
+This repository provides a straightforward way to translate CK3 (Crusader Kings 3) localization files using an automated process.
+
+## Prerequisites
+
+
+Before you begin, make sure you have the following:
+
+- [Node.js](https://nodejs.org/) (version 14 or higher)
+- [NPM](https://www.npmjs.com/) (Node Package Manager)
+
+## Setup Instructions
 
 1. Clone the repository
 2. Install dependencies
@@ -7,7 +19,6 @@ Simplest way to translate CK3 localization
 5. Configure target language in src/index.ts (default is Turkish)
 6. Run `npm run start`
 
-
-Note: Marked rows will not be translated such as `# Translated!`
-
-You can also check non required other tools like merge-translated-yml and yml-translate-pointer. These are optional tools for my development.
+## Notes
+- Marked rows will not be translated such as `# Translated!`
+- You can also check non required other tools like merge-translated-yml and yml-translate-pointer. These are optional tools for my development.
