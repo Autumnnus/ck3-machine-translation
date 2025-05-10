@@ -1,8 +1,7 @@
 import axios from "axios";
+import dotenv from "dotenv";
 import { promises as fs } from "fs";
 import * as path from "path";
-import dotenv from "dotenv";
-
 
 dotenv.config();
 const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
@@ -44,26 +43,41 @@ async function processDirectory(dir: string, targetLang: string) {
 async function processFile(filePath: string, targetLang: string) {
   const content = await fs.readFile(filePath, "utf8");
   const lines = content.split("\n");
+  let translatedCount = 0;
   const out = await Promise.all(
     lines.map(async (line, idx) => {
       if (idx === 0 && line.trim().startsWith("l_english:")) {
         return line;
       }
 
-      if (!line.trim() || line.includes("# Translated!")) return line;
+      if (!line.trim() || line.includes("# Translated!")) {
+        return line;
+      }
 
-      const noComment = line.replace(/(^|[^"])\s+#(?![^"]*#).*$/, "$1").trimEnd();
+      const noComment = line
+        .replace(/(^|[^"])\s+#(?![^"]*#).*$/, "$1")
+        .trimEnd();
       const { clean, map } = extractTranslatable(noComment);
+      const keyMatch = line.match(/^\s*([^:#"\s]+):/);
+      if (keyMatch) {
+        console.log(`Translating key: ${keyMatch[1]}`);
+      }
       const translated = clean.trim()
         ? await translateText(clean, targetLang)
         : clean;
+
       const result = reinsertPatterns(translated, map) + " # Translated!";
+
+      translatedCount++;
       return line.startsWith(" ") ? result : " " + result;
     })
   );
 
   await fs.writeFile(filePath, out.join("\n"), "utf8");
+  console.log(`\x1b[32m ------------------------- \x1b[0m`);
   console.log(`✓ ${filePath}`);
+  console.log(`Total translated lines: ${translatedCount}`);
+  console.log(`\x1b[31m ------------------------- \x1b[0m`);
 }
 
 const rootFolder = "./loc";
